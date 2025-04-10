@@ -4,7 +4,9 @@ A Python script to visualise trip itineraries with folium.
 
 ## Setup
 
-Install the `folium` [package](https://github.com/python-visualization/folium?tab=readme-ov-file#installation)
+```sh
+poetry install
+```
 
 ## Run
 
