@@ -117,19 +117,13 @@ def create_map(trip: list[Stop], center: tuple[int, int], zoom: int) -> folium.M
     for stop in trip:
         name = stop.name
         folium.Marker(
-            location=stop.coordinates,
-            popup=name,
-            tooltip=name,
-            icon=folium.Icon(icon=stop.icon, prefix="fa"),
+            location=stop.coordinates, popup=name, tooltip=name, icon=folium.Icon(icon=stop.icon, prefix="fa")
         ).add_to(m)
 
     # if dates are given, animate the markers
     if trip[0].date is not None:
         folium.plugins.AntPath(
-            [stop.coordinates for stop in trip],
-            delay=1000,
-            color="#FFFFFF",  # "#1BB5CB",
-            pulse_color="#E7464F",
+            [stop.coordinates for stop in trip], delay=1000, color="#FFFFFF", pulse_color="#E7464F"
         ).add_to(m)
     else:
         # draw connecting route
@@ -141,12 +135,8 @@ def create_map(trip: list[Stop], center: tuple[int, int], zoom: int) -> folium.M
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-l", "--locations", type=str, required=True)
-    parser.add_argument(
-        "-cx", help="Map center x-coordinate", type=int, required=False, default=0
-    )
-    parser.add_argument(
-        "-cy", help="Map center y-coordinate", type=int, required=False, default=0
-    )
+    parser.add_argument("-cx", help="Map center x-coordinate", type=int, required=False, default=0)
+    parser.add_argument("-cy", help="Map center y-coordinate", type=int, required=False, default=0)
     parser.add_argument("-z", "--zoom", default=10, required=False, type=int)
     args = parser.parse_args()
 
