@@ -1,4 +1,17 @@
-{
-  "copenhagen": { "location": [55.6767, 12.56848], "icon": "sailboat" },
-  "odense": { "location": [55.39808, 10.38175], "icon": "book" }
-}
+[
+  {
+    "name": "copenhagen",
+    "icon": "sailboat",
+    "date": ["2025-01-01", "2025-01-10"]
+  },
+  {
+    "name": "odense",
+    "icon": "book",
+    "date": "2025-01-06"
+  },
+  {
+    "name": "denmark, thy national park",
+    "icon": "water",
+    "date": "2025-01-07"
+  }
+]
