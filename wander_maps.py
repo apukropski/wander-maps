@@ -6,6 +6,7 @@ from datetime import datetime
 
 import folium
 import folium.plugins
+import numpy as np
 import xyzservices.providers as xyz
 from geopy.geocoders import Nominatim
 
@@ -101,6 +102,10 @@ def _get_map(center: tuple[int, int], zoom: int) -> folium.Map:
     return base_map
 
 
+def calculate_map_centroid(*coordinates: tuple[float, float]) -> tuple[float, float]:
+    return np.mean(coordinates, axis=0)
+
+
 def create_map(trip: list[Stop], center: tuple[int, int], zoom: int) -> folium.Map:
     """Creates a `folium.Map` from the given `Stop`s"""
     # initialise the map
@@ -135,8 +140,8 @@ def create_map(trip: list[Stop], center: tuple[int, int], zoom: int) -> folium.M
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-l", "--locations", type=str, required=True)
-    parser.add_argument("-cx", help="Map center x-coordinate", type=int, required=False, default=0)
-    parser.add_argument("-cy", help="Map center y-coordinate", type=int, required=False, default=0)
+    parser.add_argument("-cx", help="Map center x-coordinate", type=int, required=False, default=None)
+    parser.add_argument("-cy", help="Map center y-coordinate", type=int, required=False, default=None)
     parser.add_argument("-z", "--zoom", default=10, required=False, type=int)
     args = parser.parse_args()
 
@@ -147,7 +152,11 @@ if __name__ == "__main__":
     trip = convert_trip_locations(locations)
 
     # create the map with the locations
-    m = create_map(trip, (args.cx, args.cy), args.zoom)
+    print("Create map")
+    # calculate the centroid of all locations
+    # use set to avoid weighted centroid if location got visited multiple times
+    centroid = (args.cx, args.cy) if args.cx and args.cy else calculate_map_centroid(*set(t.coordinates for t in trip))
+    m = create_map(trip, centroid, args.zoom)
 
     # save map to html
-    m.save("trip-visualisation.html")
+    m.save("trip_visualisation.html")
