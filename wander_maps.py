@@ -9,6 +9,7 @@ import folium.plugins
 import numpy as np
 import xyzservices.providers as xyz
 from geopy.geocoders import Nominatim
+from xyzservices import TileProvider
 
 API_KEY_STADIA = os.getenv("API_KEY_STADIA")
 if not API_KEY_STADIA:
@@ -81,28 +82,28 @@ def convert_trip_locations(locations: dict) -> list[Stop]:
 
 
 def _get_map(center: tuple[float, float], zoom: int) -> folium.Map:
-    print(f"Map center: {center}")
-    base_map = folium.Map(location=center, tiles="OpenStreetMap", zoom_start=zoom)
-
     if API_KEY_STADIA:
-        # set up pretty world map from Stadia
+        # set up watercolour map from Stadia
         # add the Stadia Maps Stamen Watercolor provider details via xyzservices
         # and update the URL to include the API key placeholder
         # see https://docs.stadiamaps.com/guides/migrating-from-stamen-map-tiles/#folium
-        tile_provider = xyz.Stadia.StamenWatercolor
-        tile_provider["url"] = tile_provider["url"] + f"?api_key={API_KEY_STADIA}"
+        tile_provider: TileProvider = xyz.Stadia.StamenWatercolor
+        tile_provider["url"] += f"?api_key={API_KEY_STADIA}"
+        tile_url = tile_provider.build_url(api_key=API_KEY_STADIA)
 
-        folium.TileLayer(
-            tiles=tile_provider.build_url(api_key=API_KEY_STADIA),
-            attr=tile_provider.attribution,
-            name=tile_provider.name,
-            max_zoom=tile_provider.max_zoom,
-            # TODO: watercolour doesn't support retina?
+    else:
+        tile_provider: TileProvider = xyz.OpenStreetMap.Mapnik
+        tile_url = tile_provider.build_url()
+
+    return folium.Map(
+        location=center,
+        tiles=folium.TileLayer(
+            tiles=tile_url,
+            attr=tile_provider.html_attribution,
             detect_retina=True,
-        ).add_to(base_map)
-
-    # leave with default setting if API key not given
-    return base_map
+        ),
+        zoom_start=zoom,
+    )
 
 
 def calculate_map_centroid(*coordinates: tuple[float, float]) -> tuple[float, float]:
