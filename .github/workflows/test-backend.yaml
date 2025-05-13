@@ -26,6 +26,5 @@ jobs:
         run: poetry install --with dev
 
       - name: Run pytests
-        env: PYTEST_ADDOPTS="--color=yes"
-        run: poetry run pytest -v
-        working-directory: api/app/tests
+        run: poetry run pytest
+        working-directory: api/app
