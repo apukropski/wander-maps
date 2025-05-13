@@ -26,6 +26,7 @@ class Stop:
     longitude: float
     latitude: float
     icon: str = "location-dot"
+    icon_color: str = "blue"
     date: datetime = None
 
     def __repr__(self):
@@ -43,20 +44,22 @@ def convert_trip_locations(locations: dict) -> list[Stop]:
 
     for location in locations:
         name = location.pop("name").title()
-        date = location.get("date")
+        # convert date to a datetime object. if no date given, it will default to
+        # a randomly hardcoded date
+        date = location.pop("date", "2025-01-01")
+
         print(f"\tFetching coordinates for {name}")
-        # FIX: this is slow
+        # FIX: this is slow. cache?
         coordinates = GEO_LOCATOR.geocode(name)
 
-        if not date or isinstance(date, str):
-            # single visit
+        if isinstance(date, str):  # single visit
             stops.append(
                 Stop(
                     name=name,
                     longitude=coordinates.longitude,
                     latitude=coordinates.latitude,
                     date=datetime.strptime(date, "%Y-%m-%d"),
-                    icon=location["icon"],
+                    **location,
                 )
             )
         else:  # multiple visits
@@ -66,10 +69,10 @@ def convert_trip_locations(locations: dict) -> list[Stop]:
                     name=name,
                     longitude=coordinates.longitude,
                     latitude=coordinates.latitude,
-                    icon=location["icon"],
                     date=datetime.strptime(d, "%Y-%m-%d"),
+                    **location,
                 )
-                for d in location["date"]
+                for d in date
             ]
 
             stops.extend(_stops)
@@ -122,7 +125,10 @@ def create_map(trip: list[Stop], center: tuple[int, int], zoom: int) -> folium.M
     for stop in trip:
         name = stop.name
         folium.Marker(
-            location=stop.coordinates, popup=name, tooltip=name, icon=folium.Icon(icon=stop.icon, prefix="fa")
+            location=stop.coordinates,
+            popup=name,
+            tooltip=name,
+            icon=folium.Icon(icon=stop.icon, prefix="fa", color=stop.icon_color),
         ).add_to(m)
 
     folium.PolyLine([stop.coordinates for stop in trip]).add_to(m)
