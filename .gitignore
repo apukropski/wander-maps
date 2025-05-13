@@ -1,3 +1,1 @@
-*html
-*.json
-!example_trip.json
+**/*.env

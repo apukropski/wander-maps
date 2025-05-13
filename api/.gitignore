@@ -1,0 +1,5 @@
+__pycache__
+.pytest*
+
+data/*.json
+!data/example_trip.json
