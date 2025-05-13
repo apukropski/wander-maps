@@ -125,14 +125,7 @@ def create_map(trip: list[Stop], center: tuple[int, int], zoom: int) -> folium.M
             location=stop.coordinates, popup=name, tooltip=name, icon=folium.Icon(icon=stop.icon, prefix="fa")
         ).add_to(m)
 
-    # if dates are given, animate the markers
-    if trip[0].date is not None:
-        folium.plugins.AntPath(
-            [stop.coordinates for stop in trip], delay=1000, color="#FFFFFF", pulse_color="#E7464F"
-        ).add_to(m)
-    else:
-        # draw connecting route
-        folium.PolyLine([stop.coordinates for stop in trip]).add_to(m)
+    folium.PolyLine([stop.coordinates for stop in trip]).add_to(m)
 
     return m
 
