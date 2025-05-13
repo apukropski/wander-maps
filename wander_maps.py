@@ -80,7 +80,7 @@ def convert_trip_locations(locations: dict) -> list[Stop]:
     return stops
 
 
-def _get_map(center: tuple[int, int], zoom: int) -> folium.Map:
+def _get_map(center: tuple[float, float], zoom: int) -> folium.Map:
     print(f"Map center: {center}")
     base_map = folium.Map(location=center, tiles="OpenStreetMap", zoom_start=zoom)
 
@@ -109,7 +109,7 @@ def calculate_map_centroid(*coordinates: tuple[float, float]) -> tuple[float, fl
     return np.mean(coordinates, axis=0)
 
 
-def create_map(trip: list[Stop], center: tuple[int, int], zoom: int) -> folium.Map:
+def create_map(trip: list[Stop], center: tuple[float, float], zoom: int) -> folium.Map:
     """Creates a `folium.Map` from the given `Stop`s"""
     # initialise the map
     m = _get_map(center, zoom)
@@ -139,8 +139,8 @@ def create_map(trip: list[Stop], center: tuple[int, int], zoom: int) -> folium.M
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-l", "--locations", type=str, required=True)
-    parser.add_argument("-cx", help="Map center x-coordinate", type=int, required=False, default=None)
-    parser.add_argument("-cy", help="Map center y-coordinate", type=int, required=False, default=None)
+    parser.add_argument("-cx", help="Map center x-coordinate", type=float, required=False, default=None)
+    parser.add_argument("-cy", help="Map center y-coordinate", type=float, required=False, default=None)
     parser.add_argument("-z", "--zoom", default=10, required=False, type=int)
     args = parser.parse_args()
 
